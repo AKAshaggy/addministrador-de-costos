@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administrador de Presupuestos</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(to bottom right, #b3e0ff 0%, #ffffff 100%);
+        transition: background-color 0.5s ease;
+    }
+    .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+    input[type="text"], input[type="number"] {
+        width: calc(100% - 10px);
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+    button {
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 50%; /* Hace que el botón sea redondo */
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    li {
+        margin-bottom: 5px;
+    }
+    /* Agregamos reglas CSS específicas para el modo oscuro */
+    .dark-mode {
+        background: linear-gradient(to bottom right, #333333 0%, #111111 100%);
+        color: #fff;
+    }
+    .dark-mode button {
+        background-color: #fff;
+        color: #000;
+    }
+    .dark-mode button:hover {
+        background-color: #f2f2f2;
+    }
+</style>
+</head>
+<body>
+
+<div class="container" id="container">
+    <h2>Administrador de Presupuestos</h2>
+    <label for="presupuestoInicial">Presupuesto Inicial:</label>
+    <input type="number" id="presupuestoInicial" placeholder="Ingrese su presupuesto inicial">
+    <button onclick="guardarPresupuesto()">Guardar</button>
+    
+    <h3>Agregar Gasto:</h3>
+    <label for="nombreGasto">Nombre:</label>
+    <input type="text" id="nombreGasto" placeholder="Ingrese nombre del gasto">
+    <label for="cantidadGasto">Cantidad:</label>
+    <input type="number" id="cantidadGasto" placeholder="Ingrese cantidad del gasto">
+    <button onclick="agregarGasto()">Agregar Gasto</button>
+
+    <h3>Presupuesto Restante: <span id="presupuestoRestante"></span></h3>
+    <ul id="listaGastos"></ul>
+    
+    <button onclick="toggleDarkMode()">🌙</button> <!-- Botón redondo para activar el modo oscuro -->
+</div>
+
+<script>
+    let presupuestoInicial = 0;
+    let presupuestoRestante = 0;
+    const listaGastos = [];
+
+    function guardarPresupuesto() {
+        presupuestoInicial = parseInt(document.getElementById('presupuestoInicial').value);
+        presupuestoRestante = presupuestoInicial;
+        actualizarPresupuesto();
+    }
+
+    function agregarGasto() {
+        const nombreGasto = document.getElementById('nombreGasto').value;
+        const cantidadGasto = parseInt(document.getElementById('cantidadGasto').value);
+
+        if (nombreGasto !== '' && !isNaN(cantidadGasto)) {
+            if (cantidadGasto <= presupuestoRestante) {
+                listaGastos.push({ nombre: nombreGasto, cantidad: cantidadGasto });
+                presupuestoRestante -= cantidadGasto;
+                actualizarPresupuesto();
+                actualizarListaGastos();
+                limpiarCampos();
+            } else {
+                alert('El gasto excede el presupuesto restante.');
+            }
+        } else {
+            alert('Por favor, complete todos los campos.');
+        }
+    }
+
+    function actualizarPresupuesto() {
+        document.getElementById('presupuestoRestante').textContent = presupuestoRestante;
+    }
+
+    function actualizarListaGastos() {
+        const lista = document.getElementById('listaGastos');
+        lista.innerHTML = '';
+        listaGastos.forEach(gasto => {
+            const li = document.createElement('li');
+            li.textContent = `${gasto.nombre}: $${gasto.cantidad}`;
+            lista.appendChild(li);
+        });
+    }
+
+    function limpiarCampos() {
+        document.getElementById('nombreGasto').value = '';
+        document.getElementById('cantidadGasto').value = '';
+    }
+
+    function toggleDarkMode() {
+        const container = document.getElementById('container');
+        container.classList.toggle('dark-mode');
+    }
+</script>
+
+</body>
+</html>
